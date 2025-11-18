@@ -17,7 +17,7 @@ return new class extends Migration
             $table->json('board')->nullable(); // ["", "", "", "", "", "", "", "", ""]
             $table->string('turn')->dafault('X');
             $table->unsignedBigInteger('player_x')->nullable();
-            $table->unsignedBigInteger('player_0')->nullable();
+            $table->unsignedBigInteger('player_o')->nullable();
             $table->string('winner')->nullable();
             $table->boolean('is_draw')->default(false);
             $table->timestamps();
