@@ -10,13 +10,12 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/prueba', [MessageController::class, 'prueba']);
+Route::post('/send', [MessageController::class, 'send'])->middleware('auth:sanctum');
+Route::get('/prueba', [MessageController::class, 'prueba'])->middleware('auth:sanctum');
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
-
-// Route::post('/message-send', [])
 
 Route::post('/games', [GameController::class, 'create']);
 Route::post('/games/join/{code}', [GameController::class, 'join']);

@@ -35,7 +35,7 @@ class Mensaje implements ShouldBroadcastNow
     {
         return [
             // new PrivateChannel('channel-name'),
-            new Channel('');
+            new PresenceChannel("chat.{$this->mensaje->user_id}")
         ];
     }
 }
