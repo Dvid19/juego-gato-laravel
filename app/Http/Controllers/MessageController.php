@@ -8,26 +8,39 @@ use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-    //
-    public function send(Request $request)
+
+    public function index(Request $request)
     {
+        $user = $request->user();
+        $usersChats = $user->chats; 
+        return response()->json($usersChats, 200);
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $user = $request->user();
+
         $validated = $request->validate([
-            'user_id' => ['required', 'integer', 'gt:1'],
-            'content' => ['required', 'string'],
-            'to_user_id' => ['required', 'integer', 'gt:1']
+            'content' => 'required|string',
+            // 'status' => 'required|string|in:enviado,entregado,leido',
+            'from_user_id' => 'required|integer'
         ]);
-        
+
         $message = Message::create([
-            "user_id" => $validated["user_id"],
-            "content" => $validated["content"],
-            "to_user_id" => $validated["to_user_id"],
+            'to_user_id' => $user->id,
+            'content' => $validated['content'],
+            'from_user_id' => $validated['from_user_id']
         ]);
 
-        $messageComplete = ["user" => $request->user(), "message" => $message];
+        $chatExists = $user->chats()->wherePivot('from_user_id', $validated['from_user_id'])->exists();
+        
+        if (!$chatExists) $user->chats()->attach($validated['from_user_id']);
 
-        // broadcast(new Mensaje($messageComplete))->toOthers();
+        $data = ['message' => $message, 'user' => $request->user()];
 
-        return response()->json($messageComplete, 200);
+        // broadcast( new Mensaje($data) )->toOthers();
+
+        return response()->json($data, 201);
     }
 
     // 

@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('chats', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('to_user_id');
-            $table->text('content');
-            $table->enum('status', ['enviado', 'entregado', 'leido'])->default('enviado');
             $table->unsignedBigInteger('from_user_id');
+
+            $table->boolean('archived')->default(false);
+
+            $table->foreign('to_user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('from_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('chats');
     }
 };
