@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('messages_status', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('conversation_id')->nullable();
+            $table->unsignedBigInteger('message_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->text('content');
-            $table->enum('type', ['texto', 'imagen', 'archivo'])->default('texto');
-            $table->dateTime('send_at')->default(now());
-            $table->softDeletes();
+            $table->dateTime('delivered_at');
+            $table->datetime('allowed_at');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('messages_status');
     }
 };

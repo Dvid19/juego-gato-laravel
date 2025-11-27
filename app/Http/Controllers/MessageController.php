@@ -3,50 +3,76 @@
 namespace App\Http\Controllers;
 
 use App\Events\Mensaje;
+use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\MessageStatus;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
 
-    public function index(Request $request)
+    /**
+     * Lista mensajes por conversación (con paginación)
+     */
+    public function index($id)
     {
-        $user = $request->user();
-        $usersChats = $user->chats; 
-        return response()->json($usersChats, 200);
+        $conversation = Conversation::findOrFail($id);
+
+        // Verificar si el usuario pertenece
+        if (!$conversation->participants()->where('user_id', auth()->user()->id)->exists()) {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+
+        // Obtener los mensajes
+        $messages = Message::where('conversation_id', $id)
+            ->with('user:id,name')
+            ->orderBy('id', 'desc')
+            ->paginate(30);
+
+        return response()->json($messages, 200);
     }
 
-    public function sendMessage(Request $request)
-    {
-        $user = $request->user();
 
-        $validated = $request->validate([
-            'content' => 'required|string',
-            // 'status' => 'required|string|in:enviado,entregado,leido',
-            'from_user_id' => 'required|integer'
+    /**
+     * Envia un mensaje
+     * Request: 
+     *  - content
+     *  - type: texto|imagen|archivo 
+     */
+    public function store(Request $request, $id)
+    {
+        $conversation = Conversation::findOrFail($id);
+
+        // Verificar permiso
+        if (!$conversation->participants()->where('user_id', auth()->user()->id)->exists()) {
+            return response()->json(['message' => 'No estas autorizado'], 403);
+        }
+
+        // Validacion de los datos enviados
+        $request->validate([
+            'content' => 'required',
+            'type' => 'required|in:texto,imagen,archivo'
         ]);
 
+        // Creación del mensaje
         $message = Message::create([
-            'to_user_id' => $user->id,
-            'content' => $validated['content'],
-            'from_user_id' => $validated['from_user_id']
+            'conversation_id' => $conversation->id,
+            'user_id' => auth()->user()->id,
+            'content' => $request->content,
+            'type' => $request->type
         ]);
 
-        $chatExists = $user->chats()->wherePivot('from_user_id', $validated['from_user_id'])->exists();
-        
-        if (!$chatExists) $user->chats()->attach($validated['from_user_id']);
+        // Crear el estado de cada mensaje
+        foreach($conversation->participants() as $participant){
+            MessageStatus::create([
+                'message_id' => $message->id,
+                'user_id' => $participant->user_id,
+                'delivered_at' => now()
+            ]);
+        }
 
-        $data = ['message' => $message, 'user' => $request->user()];
 
-        // broadcast( new Mensaje($data) )->toOthers();
-
-        return response()->json($data, 201);
+        return response()->json($message->load('user'), 201);
     }
 
-    // 
-    public function prueba(Request $request)
-    {
-        $user = $request->user();
-        return response()->json(["message" => "Hola que hace", "user" => $user], 200);
-    }
 }

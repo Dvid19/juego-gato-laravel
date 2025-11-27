@@ -3,14 +3,38 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Message extends Model
 {
+    use SoftDeletes;
+
     //
+    protected $table = 'messages';
     protected $fillable = [
-        'to_user_id',
+        'conversation_id',
+        'user_id',
         'content',
-        'status',
-        'from_user_id'
+        'type', // 'texto', 'imagen', 'archivo'
+        'send_at',
     ];
+    protected $guarded = [];
+
+
+    public function user():BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function conversation():BelongsTo
+    {
+        return $this->belongsTo(Conversation::class);
+    }
+
+    public function statuses():HasMany
+    {
+        return $this->hasMany(MessageStatus::class);
+    }
 }

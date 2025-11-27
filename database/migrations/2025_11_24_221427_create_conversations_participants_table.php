@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('conversations_participants', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('conversation_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->text('content');
-            $table->enum('type', ['texto', 'imagen', 'archivo'])->default('texto');
-            $table->dateTime('send_at')->default(now());
-            $table->softDeletes();
+            $table->enum('role', ['miembro', 'admin'])->default('miembro');
+            $table->dateTime('joined_at')->default(now());
+            $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('conversations_participants');
     }
 };

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
@@ -11,9 +12,17 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/get-chats', [MessageController::class, 'index'])->middleware('auth:sanctum');
-Route::post('/sendMessage', [MessageController::class, 'sendMessage'])->middleware('auth:sanctum');
-Route::get('/prueba', [MessageController::class, 'prueba'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function() {
+
+    // Conversations
+    Route::get('/conversations', [ConversationController::class, 'index']);
+    Route::post('/conversations', [ConversationController::class, 'store']);
+
+    // Messages
+    Route::get('/conversations/{id}/messages', [MessageController::class, 'index']);
+    Route::post('/conversations/{id}/messages', [MessageController::class, 'store']);
+
+});
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
