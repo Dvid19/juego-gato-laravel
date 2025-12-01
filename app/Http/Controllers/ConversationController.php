@@ -30,7 +30,7 @@ class ConversationController extends Controller
     /**
      * Crea una conversación (privada o grupo)
      * Request esperado:
-     *  - tipo: privado | grupo
+     *  - type: privado | grupo
      *  - users: [1, 2, 3] 
      */
     public function store(Request $request)

@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\Mensaje;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\GameController;
@@ -22,6 +23,11 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/conversations/{id}/messages', [MessageController::class, 'index']);
     Route::post('/conversations/{id}/messages', [MessageController::class, 'store']);
 
+});
+
+Route::get('/prueba', function () {
+    event( new Mensaje(['user_id' => 1, 'message' => 'Hola soy el reverb']) );
+    return "Hola desde el backend";
 });
 
 Route::post('/login', [AuthController::class, 'login']);

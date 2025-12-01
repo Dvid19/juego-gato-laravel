@@ -26,7 +26,7 @@ class MessageController extends Controller
         // Obtener los mensajes
         $messages = Message::where('conversation_id', $id)
             ->with('user:id,name')
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->paginate(30);
 
         return response()->json($messages, 200);
@@ -59,7 +59,7 @@ class MessageController extends Controller
             'conversation_id' => $conversation->id,
             'user_id' => auth()->user()->id,
             'content' => $request->content,
-            'type' => $request->type
+            'type' => $request->type 
         ]);
 
         // Crear el estado de cada mensaje
@@ -71,6 +71,8 @@ class MessageController extends Controller
             ]);
         }
 
+        // broadcast( new Mensaje($message) )->toOthers();
+        event( new Mensaje($message) );
 
         return response()->json($message->load('user'), 201);
     }
