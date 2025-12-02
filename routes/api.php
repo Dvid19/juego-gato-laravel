@@ -6,6 +6,8 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
+use App\Models\Conversation;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,8 +28,9 @@ Route::middleware('auth:sanctum')->group(function() {
 });
 
 Route::get('/prueba', function () {
-    event( new Mensaje(['user_id' => 1, 'message' => 'Hola soy el reverb']) );
-    return "Hola desde el backend";
+    // event( new Mensaje(['user_id' => 1, 'message' => 'Hola soy el reverb']) );
+    $conversation = Conversation::find(1)->participants->pluck('user_id')->contains(9);
+    return response()->json(['conversation' => $conversation]);
 });
 
 Route::post('/login', [AuthController::class, 'login']);
