@@ -71,8 +71,7 @@ class MessageController extends Controller
             ]);
         }
 
-        // broadcast( new Mensaje($message) )->toOthers();
-        event( new Mensaje($message) );
+        broadcast( new Mensaje($message) )->toOthers();
 
         return response()->json($message->load('user'), 201);
     }

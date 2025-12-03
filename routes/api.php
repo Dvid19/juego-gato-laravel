@@ -9,7 +9,13 @@ use App\Http\Controllers\UserController;
 use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+Route::middleware('auth:sanctum')->post('/broadcasting/auth', function () {
+    return Broadcast::auth(request());
+});
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
