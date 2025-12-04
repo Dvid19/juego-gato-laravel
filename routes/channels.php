@@ -11,8 +11,7 @@ Broadcast::channel('game.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('chat.{chatId}', function(User $user, int $chatId) {
-    // return Conversation::find($chatId)->participants->pluck('user_id')->contains($user->id);
-    return true;
+    return Conversation::find($chatId)->participants->pluck('user_id')->contains($user->id);
 });
 
 
