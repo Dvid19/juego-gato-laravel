@@ -41,7 +41,7 @@ class GameController extends Controller
 
         $game->save();
 
-        broadcast(new GameJoined($game))->toOthers();
+        // broadcast(new GameJoined($game))->toOthers();
 
         return response()->json($game);
     }
