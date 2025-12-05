@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->json('board')->nullable(); // ["", "", "", "", "", "", "", "", ""]
-            $table->string('turn')->dafault('X');
+            $table->string('turn')->default('X');
             $table->unsignedBigInteger('player_x')->nullable();
             $table->unsignedBigInteger('player_o')->nullable();
             $table->string('winner')->nullable();

@@ -11,11 +11,11 @@ use Illuminate\Support\Str;
 class GameController extends Controller
 {
     //
-    public function create(Request $request)
+    public function create()
     {
         $code = strtoupper(Str::random(5));
         // garantizamos unidicidad ligera
-        while (Game::where('code', $code)->exits()) {
+        while (Game::where('code', $code)->exists()) {
             $code = strtoupper(Str::random(5));
         }
 
