@@ -5,7 +5,7 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('game.{id}', function ($user, $id) {
+Broadcast::channel('game.{code}', function ($user, $code) {
     // return (int) $user->id === (int) $id;
     return ['id' => $user->id ?? null, 'name' => $user->name ?? null];
 });

@@ -33,7 +33,7 @@ class GameJoined implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('game.' . $this->game->id);
+        return new PresenceChannel('game.' . $this->game->code);
         // return [
         //     new PrivateChannel('channel-name'),
         // ];

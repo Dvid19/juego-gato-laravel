@@ -31,6 +31,13 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/conversations/{id}/messages', [MessageController::class, 'index']);
     Route::post('/conversations/{id}/messages', [MessageController::class, 'store']);
 
+    // Juego gato multijugador
+    Route::get('/games/{code}', [GameController::class, 'game']);
+    Route::post('/games', [GameController::class, 'create']);
+    Route::post('/games/join/{code}', [GameController::class, 'join']);
+    Route::post('/games/{id}/move', [GameController::class, 'move']);
+    Route::post('/games/{id}/restart', [GameController::class, 'restart']);
+
 });
 
 Route::get('/prueba', function () {
@@ -45,7 +52,3 @@ Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum')
 
 Route::post('/store', [UserController::class, 'store'])->middleware('auth:sanctum');
 
-Route::post('/games', [GameController::class, 'create']);
-Route::post('/games/join/{code}', [GameController::class, 'join']);
-Route::post('/games/{id}/move', [GameController::class, 'move']);
-Route::post('/games/{id}/restart', [GameController::class, 'restart']);

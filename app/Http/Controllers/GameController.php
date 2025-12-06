@@ -11,7 +11,15 @@ use Illuminate\Support\Str;
 class GameController extends Controller
 {
     //
-    public function create()
+    public function game(string $code)
+    {
+        $game = Game::where('code', $code)->firstOrFail();
+
+        return response()->json($game);
+    }
+
+    //
+    public function create(Request $request)
     {
         $code = strtoupper(Str::random(5));
         // garantizamos unidicidad ligera
@@ -21,6 +29,7 @@ class GameController extends Controller
 
         $game = Game::create([
             'code' => $code,
+            'player_x' => $request->user()->id 
             // 'code' => Str::upper(Str::random(5)),
             // 'board' => array_fill(0, 9, ""),
             // 'turn' => 'X'
@@ -41,7 +50,7 @@ class GameController extends Controller
 
         $game->save();
 
-        // broadcast(new GameJoined($game))->toOthers();
+        broadcast(new GameJoined($game))->toOthers();
 
         return response()->json($game);
     }
