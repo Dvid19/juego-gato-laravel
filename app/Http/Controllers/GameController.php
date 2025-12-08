@@ -10,7 +10,9 @@ use Illuminate\Support\Str;
 
 class GameController extends Controller
 {
-    //
+    /**
+     * string | code: 'ASDQW'
+     */
     public function game(string $code)
     {
         $game = Game::where('code', $code)->firstOrFail();
@@ -18,9 +20,12 @@ class GameController extends Controller
         return response()->json($game);
     }
 
-    //
+    /**
+     * Request | request: '(Para obtener el id del usuario)'
+     */
     public function create(Request $request)
     {
+        // return response()->json($request->user());
         $code = strtoupper(Str::random(5));
         // garantizamos unidicidad ligera
         while (Game::where('code', $code)->exists()) {
@@ -38,7 +43,10 @@ class GameController extends Controller
         return response()->json($game);
     }
 
-    //
+    /**
+     * Request | request: '(Para obtener el id del usuario)'
+     * string | code: 'XSASD' 
+     */
     public function join(Request $request, $code)
     {
         $game = Game::where('code', $code)->firstOrFail();
@@ -55,10 +63,15 @@ class GameController extends Controller
         return response()->json($game);
     }
 
-    //
-    public function move(Request $request, $id)
+    /**
+     * Request | request: '(Para obtener el id del usuario)'
+     * int | index: 2 (del 0 - 8)
+     * 
+     * string | code: 'AQWSA'
+     */
+    public function move(Request $request, $code)
     {
-        $game = Game::findOrFail($id);
+        $game = Game::where('code', $code)->firstOrFail();
         $index = (int) $request->index;
         $userId = $request->user()?->id ?? $request->header('X-Guest-Id');
 
@@ -67,7 +80,7 @@ class GameController extends Controller
         if($index < 0 || $index > 8) return response()->json(['messgae' => 'Index no valido.'], 400);
         // if ($game->board[$index] !== "") return;
         if ($game->turn === 'X' && $game->player_x !== $userId) return response()->json(['message' => "Abandono el usuario {$userId}"], 400);
-        if ($game->turn === 'O' && $game->player_0 !== $userId) return response()->json(['message' => "Abandono el usuario {$userId}"], 400);
+        if ($game->turn === 'O' && $game->player_o !== $userId) return response()->json(['message' => "Abandono el usuario {$userId}"], 400);
 
         // Actualizar tablero 
         $board = $game->board;
@@ -106,7 +119,7 @@ class GameController extends Controller
         // cambiar turno si no finalizó
         if (!$game->winner && !$game->is_draw){
             $game->turn = $game->turn === 'X' ? 'O' : 'X';
-        }
+        }   
 
         $game->save();
 
@@ -115,10 +128,12 @@ class GameController extends Controller
         return response()->json($game);        
     }
 
-    //
-    public function restart(Request $request, $id)
+    /**
+     * string | code: 'AQZXC'
+     */
+    public function restart($code)
     {   
-        $game = Game::fidnOrFail($id);
+        $game = Game::where('code', $code)->firstOrFail();
         $game->board = array_fill(0,9,'');
         $game->turn = 'X';
         $game->winner = null;
@@ -131,7 +146,7 @@ class GameController extends Controller
     }
 
     private function checkWinner(array $b)
-    {
+    { 
         $wins = [
             [0,1,2],[3,4,5],[6,7,8],
             [0,3,6],[1,4,7],[2,5,8],

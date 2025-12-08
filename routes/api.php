@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/p', function () {
+    return 'Hola señor';
+});
+
+
 Route::middleware('auth:sanctum')->post('/broadcasting/auth', function () {
     return Broadcast::auth(request());
 });
@@ -35,8 +40,8 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('/games/{code}', [GameController::class, 'game']);
     Route::post('/games', [GameController::class, 'create']);
     Route::post('/games/join/{code}', [GameController::class, 'join']);
-    Route::post('/games/{id}/move', [GameController::class, 'move']);
-    Route::post('/games/{id}/restart', [GameController::class, 'restart']);
+    Route::post('/games/{code}/move', [GameController::class, 'move']);
+    Route::post('/games/{code}/restart', [GameController::class, 'restart']);
 
 });
 
